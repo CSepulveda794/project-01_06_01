@@ -8,24 +8,10 @@
    */
 
     "use strict";
-
-    
     var formValidity = true;
 
 
 
-
-
-
-
-function creatEventListeners(){
-   var form = document.getElementsByTagName("form")[0];
-    if (form.addEventListener) {
-        form.addEventListener("submit", validateForm, false);
-    } else if (form.attachEvent) {
-        form.attachEvent("onsubmit", validateForm);
-    }
-}
 //function to validate the entire form 
 function validateForm(evt) {
     if (evt.preventDefault) {
@@ -33,34 +19,57 @@ function validateForm(evt) {
     } else {
         evt.returnvalue = false;
     }
-
-    formValidity = true;
-   
     validateRequired();
+}
 
-    if (formValidity === true) { 
-        //form is valid
-        document.getElementById("errorText").innerHTML = "";
-        document.getElementById("errorText").style.display = "none";
-        document.getElementById("form")[0].submit();
+
+
+function validateRequired(){ 
+    var collectInput = document.getElementsByTagName("input");
+    var errorDiv = document.getElementById("errorText");
+    var currentElementCount = collectInput.length;
+    var validity = true;
+    var currentElement;
+    
+    //loops through the field checking for validity 
+    try {
+        for (var i = 0; i < currentElementCount; i++) {
+            currentElement = collectInput[i];
+            if (currentElement.value === ""){
+                currentElement.style.background = "rgb(255,233,233)";
+                validity = false;
+            }else {
+                currentElement.style.background = "white";
+            }
+        }
+        // if a field is empty it will notify the user
+        if (validity === false){
+            throw "Please complete the empty boxes"
+        }else {
+            errorDiv.style.display = "none";
+            errorDiv.innerHTML = "";
+            formValidity = true;
+        }
+    } catch (msg) {
+        errorDiv.style.display = "block";
+        errorDiv.innerHTML = msg;
+        formValidity = false;
+    }
+    // if form is completely done with no errors submit
+    if (formValidity === true){
+        document.getElementsByTagName("form")[0].submit();
+    }
+    
+}
+
+function creatEventListeners(){
+   
+   var form = document.getElementsByTagName("form")[0];
+    if (form.addEventListener) {
+        form.addEventListener("submit", validateForm, false);
     } else {
-        document.getElementById('errorText').innerHTML = "Please fix the indicated problems and then resubmit your order.";
-        document.getElementById("errorText").style.display = "block";
-        scroll(0, 0);
+        form.addEventListener("onsubmit", validateForm);
     }
 }
 
-function validateRequired(){
-    var inputElements = document.quereySelectorAll("#contactinfo input")
-    var errorDiv = document.getElementById(errortext)
-    
-    var currentElement = contactinfo.length
-    alert(currentElement);
-}
-
-
-    if (window.addEventListener) {
-    window.addEventListener("load", creatEventListeners, false);
-} else if (window.attachEvent) {
-    window.attatchEvent("onload", creatEventListeners);
-}
+    addEventListener("load", creatEventListeners);
